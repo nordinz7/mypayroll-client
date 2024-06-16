@@ -1,32 +1,38 @@
-import { useState } from 'react'
-import { gql, useQuery } from '@apollo/client'
-import { DataTableDemo } from '@/components/employees'
-import './App.css'
+import AppRouter from "@/pages/AppRouter"
+import { Theme, useTheme } from "@/stores/useTheme"
+import { useEffect } from "react"
+import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 
-const GET_EMPLOYEES = gql`
-query emps($input: EmployeesQueryInput) {
-  employees(input: $input) {
-    rows {
-      name
-      id
+
+const App = () =>{
+  const theme = useTheme(state => state.theme)
+  const client = new ApolloClient({
+    uri:'http://localhost:8000/graphql',
+    cache: new InMemoryCache({addTypename: false}),
+  });
+
+  useEffect(() => {
+    const root = window.document.documentElement
+
+    root.classList.remove(Theme.light, Theme.dark)
+
+    if (theme === Theme.system) {
+      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
+        .matches
+        ? Theme.dark
+        : Theme.light
+
+      root.classList.add(systemTheme)
+      return
     }
-    pagination{
-      count
-      limit
-      offset
-    }
-  }
-}
-`
 
-function App () {
-  const [count, setCount] = useState(0)
-  const { data, loading } = useQuery(GET_EMPLOYEES, { variables: { input: { limit: 10, offset: 0 } } })
-
-  console.log('--------data', data)
+    root.classList.add(theme)
+  }, [theme])
 
   return (
-    <DataTableDemo />
+    <ApolloProvider client={client}>
+      <AppRouter/>
+    </ApolloProvider>
   )
 }
 

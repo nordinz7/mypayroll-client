@@ -1,3 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body,
+#root {
+  min-width: 100vw; /* Viewport width */
+  min-height: 100vh; /* Viewport height */
+  margin: 0; /* Remove default margin */
+}
