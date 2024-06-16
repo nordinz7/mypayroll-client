@@ -1,15 +1,25 @@
-import Layout from "@/components/shared/layout";
+import { UserAuthForm, UserAuthFormMode } from "@/components/auth";
+import AuthLayout from "@/components/shared/layouts/auth";
+import Layout from "@/components/shared/layouts/sidebarmenu";
 import Employees from "@/pages/employees";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 const AppRouter = () => {
   return (
-    <BrowserRouter>
+  <BrowserRouter>
     <Routes>
-      <Route path="/" element={<Layout />}>
-        <Route path="/" index element={<Employees />} />
-        {/* <Route path="*" element={<NoPage />} /> */}
+      <Route path="/login" element={<UserAuthForm />} />
+      <Route path="/signup" element={<UserAuthForm mode={UserAuthFormMode.SignUp} />} />
+
+
+      <Route element={<AuthLayout />}>
+        <Route element={<Layout />}>
+          <Route path='/employees' element={<Employees />} />
+          {/* <Route path="*" element={<NoPage />} /> */}
+        </Route>
       </Route>
+
+
     </Routes>
   </BrowserRouter>
   )

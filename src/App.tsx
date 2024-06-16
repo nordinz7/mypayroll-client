@@ -2,6 +2,7 @@ import AppRouter from "@/pages/AppRouter"
 import { Theme, useTheme } from "@/stores/useTheme"
 import { useEffect } from "react"
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+import { Toaster } from "@/components/ui/toaster";
 
 
 const App = () =>{
@@ -32,6 +33,7 @@ const App = () =>{
   return (
     <ApolloProvider client={client}>
       <AppRouter/>
+      <Toaster />
     </ApolloProvider>
   )
 }

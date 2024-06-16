@@ -4,7 +4,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable"
-import SidebarMenu from '@/components/shared/layout/sidebarMenu'
+import SidebarMenu from '@/components/shared/layouts/sidebarmenu/sidebarMenu'
 
 type LayoutProps = {
 }
@@ -13,7 +13,7 @@ const index = (props: LayoutProps) => {
   return (
       <ResizablePanelGroup
         direction="horizontal"
-        className="min-h-[100vh] min-w-[100vw] max-w-md rounded-lg border"
+        className="min-h-[100vh] min-w-[100vw] max-w-md border dark:border-gray-700 bg-white dark:bg-gray-800 dark:text-[#e7e5e4] shadow-lg dark:shadow-none overflow-hidden"
       >
         <ResizablePanel defaultSize={10} maxSize={10} minSize={3}>
           <div className="flex h-full items-start justify-center pt-2 pb-2">
