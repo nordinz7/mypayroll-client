@@ -15,6 +15,7 @@ import { useToast } from "@/components/ui/use-toast"
 import { useAuth } from "@/stores/useAuth"
 import { useNavigate } from "react-router-dom"
 import { ToastAction } from "@/components/ui/toast"
+import { Typography } from "@/components/ui/typography"
 
 export enum UserAuthFormMode {
   SignIn = "SignIn",
@@ -108,7 +109,9 @@ export function UserAuthForm({ className, mode = UserAuthFormMode.SignIn ,...pro
   }
 
   return (
-    <div className={cn("grid gap-6", className, 'flex-col justify-center items-center h-[100vh]')} {...props}>
+    <>
+    <div className={cn("grid", className, 'flex-col justify-center items-center h-[100vh]')} {...props}>
+      <Typography type="h1" text="myPayroll" />
       <form onSubmit={onSubmit}>
         <div className="grid gap-2">
           {isSignUp && <div className="grid gap-1">
@@ -204,5 +207,6 @@ export function UserAuthForm({ className, mode = UserAuthFormMode.SignIn ,...pro
         GitHub
       </Button>
     </div>
+    </>
   )
 }
