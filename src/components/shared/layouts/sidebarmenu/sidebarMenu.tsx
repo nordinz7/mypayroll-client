@@ -1,7 +1,15 @@
 import { ThemeToggle } from "@/components/shared/theme-switcher";
+import { useAuth } from "@/stores/useAuth";
 import { FaUsers } from "react-icons/fa6";
 import { IoIosLogOut } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
+import { FaUser } from "react-icons/fa";
+
+
+const SidebarMenu = () => {
+  const logout = useAuth((state) => state.logOut)
+  const user = useAuth((state) => state.user)
+  const navigate = useNavigate()
 
 const menulist:any = [
   {
@@ -13,21 +21,36 @@ const menulist:any = [
 
 menulist.push(
   {
-    icon: <ThemeToggle/>,
-    link: '#'
+    title: user?.name || 'Profile',
+    icon: <FaUser/>,
+    link: '/profile'
   },
   {
+    title: 'Theme',
+    icon: <ThemeToggle/>,
+  },
+  {
+    title: 'Logout',
     icon: <IoIosLogOut/>,
-    link: '/login'
+    link: '/login',
+    action: logout
   }
 )
 
-const SidebarMenu = () => {
-  const navigate = useNavigate()
+const handleMenuClick = (menu : any) => {
+  if (menu.link) {
+  navigate(menu.link)
+  }
+
+  if (menu.action) {
+    menu.action()
+  }
+}
+
 
   return <div className="flex-col justify-between">
  {menulist.map((menu, index) => (
-  <p className="w-full rounded-md p-2 hover:bg-gray-300/50 transition duration-150 ease-in-out" onClick={()=> navigate(menu.link)}>
+  <p className="w-full rounded-md p-2 hover:bg-gray-300/50 transition duration-150 ease-in-out hover:cursor-pointer" onClick={()=> handleMenuClick(menu)}>
     <span className="flex gap-1 items-center">{menu.icon}{menu.title}</span>
   </p>
 ))}

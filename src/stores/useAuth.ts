@@ -6,6 +6,7 @@ type AuthState = {
   setToken: (token: string | null | undefined) => void
   user: Record<string, any> | null | undefined
   setUser: (user: Record<string, any> | null | undefined) => void
+  logOut: () => void
 }
 
 export const useAuth = create<AuthState>()(
@@ -15,6 +16,9 @@ export const useAuth = create<AuthState>()(
       setToken: (token: string | null | undefined) => set({ token }),
       user: null,
       setUser: (user: Record<string, any> | null | undefined) => set({ user }),
+      logOut: () => {
+        set({ token: null, user: null })
+      },
     }),
     {
       name: "auth",

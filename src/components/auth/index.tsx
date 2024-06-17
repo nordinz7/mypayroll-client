@@ -48,8 +48,8 @@ export function UserAuthForm({ className, mode = UserAuthFormMode.SignIn ,...pro
         })
 
         setTimeout(() => {
-          navigate("/employees")
-        }, 2000)
+          navigate("/")
+        }, 1000)
       }
       setToken(data?.signIn?.jwt)
   },

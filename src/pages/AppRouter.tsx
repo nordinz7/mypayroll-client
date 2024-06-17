@@ -12,12 +12,12 @@ const AppRouter = () => {
       <Route path="/signup" element={<UserAuthForm mode={UserAuthFormMode.SignUp} />} />
 
 
-      <Route element={<AuthLayout />}>
-        <Route element={<Layout />}>
-          <Route path='/employees' element={<Employees />} />
-          {/* <Route path="*" element={<NoPage />} /> */}
+        <Route element={<AuthLayout />}>
+          <Route element={<Layout />}>
+            <Route path='/' element={<Employees />} />
+            {/* <Route path="*" element={<NoPage />} /> */}
+          </Route>
         </Route>
-      </Route>
 
 
     </Routes>
