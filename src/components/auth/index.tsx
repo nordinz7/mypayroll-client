@@ -120,7 +120,7 @@ export function UserAuthForm({ className, mode = UserAuthFormMode.SignIn ,...pro
             </Label>
             <Input
               id="name"
-              placeholder="John Doe"
+              placeholder="Name"
               type="name"
               autoCapitalize="none"
               autoComplete="name"
@@ -136,7 +136,7 @@ export function UserAuthForm({ className, mode = UserAuthFormMode.SignIn ,...pro
             </Label>
             <Input
               id="email"
-              placeholder="name@example.com"
+              placeholder="Email"
               type="email"
               autoCapitalize="none"
               autoComplete="email"
@@ -152,7 +152,7 @@ export function UserAuthForm({ className, mode = UserAuthFormMode.SignIn ,...pro
             </Label>
             <Input
               id="password"
-              placeholder="*********"
+              placeholder="Password"
               type="password"
               autoCapitalize="none"
               autoComplete="password"
@@ -169,7 +169,7 @@ export function UserAuthForm({ className, mode = UserAuthFormMode.SignIn ,...pro
             </Label>
             <Input
               id="confirmPassword"
-              placeholder="*********"
+              placeholder="Confirm Password"
               type="confirmPassword"
               autoCapitalize="none"
               autoComplete="confirmPassword"
@@ -180,7 +180,7 @@ export function UserAuthForm({ className, mode = UserAuthFormMode.SignIn ,...pro
               }
             />
           </div>}
-          <Button disabled={loading || signUpLoading}>
+          <Button variant="ghost" type="button" disabled={loading || signUpLoading}>
             {loading || signUpLoading && (
               <ImSpinner3 className="mr-2 h-4 w-4 animate-spin" />
             )}
@@ -188,24 +188,13 @@ export function UserAuthForm({ className, mode = UserAuthFormMode.SignIn ,...pro
           </Button>
         </div>
       </form>
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
           <span className="w-full border-t" />
-        </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">
-            Or continue with
-          </span>
-        </div>
-      </div>
-      <Button variant="outline" type="button" disabled={loading}>
-        {loading ? (
-          <ImSpinner3 className="mr-2 h-4 w-4 animate-spin" />
-        ) : (
-          <FaGithub className="mr-2 h-4 w-4" />
-        )}{" "}
-        GitHub
-      </Button>
+          <Button variant="ghost" type="button" disabled={loading || signUpLoading} onClick={()=> navigate(`/${isSignUp ? 'login' : 'signup'}`)}>
+            {loading || signUpLoading && (
+              <ImSpinner3 className="mr-2 h-4 w-4 animate-spin" />
+            )}
+            {isSignUp ? "Sign In" : "Sign Up"}
+          </Button>
     </div>
     </>
   )
