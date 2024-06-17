@@ -180,7 +180,7 @@ export function UserAuthForm({ className, mode = UserAuthFormMode.SignIn ,...pro
               }
             />
           </div>}
-          <Button variant="ghost" type="button" disabled={loading || signUpLoading}>
+          <Button variant="ghost" type="submit" disabled={loading || signUpLoading}>
             {loading || signUpLoading && (
               <ImSpinner3 className="mr-2 h-4 w-4 animate-spin" />
             )}
