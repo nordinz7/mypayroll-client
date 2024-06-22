@@ -17,7 +17,9 @@ export const useAuth = create<AuthState>()(
       user: null,
       setUser: (user: Record<string, any> | null | undefined) => set({ user }),
       logOut: () => {
-        set({ token: null, user: null })
+        return setTimeout(() => {
+          set({ token: null, user: null })
+        }, 1000)
       },
     }),
     {

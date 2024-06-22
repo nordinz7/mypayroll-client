@@ -10,49 +10,48 @@ const SidebarMenu = () => {
   const user = useAuth((state) => state.user)
   const navigate = useNavigate()
 
-const menulist:any = [
-  {
-    title: 'Employees',
-    icon: <FaUsers />,
-    link: '/'
-  }
-]
+  const menulist: any = [
+    {
+      title: 'Employees',
+      icon: <FaUsers />,
+      link: '/'
+    }
+  ]
 
-menulist.push(
-  {
-    title: user?.name || 'Profile',
-    icon: <FaUser/>,
-    link: '/profile'
-  },
-  {
-    title: 'Theme',
-    icon: <ThemeToggle/>,
-  },
-  {
-    title: 'Logout',
-    icon: <IoIosLogOut/>,
-    link: '/login',
-    action: logout
-  }
-)
+  menulist.push(
+    {
+      title: user?.name || 'Profile',
+      icon: <FaUser />,
+      link: '/profile'
+    },
+    {
+      title: 'Theme',
+      icon: <ThemeToggle />,
+    },
+    {
+      title: 'Logout',
+      icon: <IoIosLogOut />,
+      action: logout
+    }
+  )
 
-const handleMenuClick = (menu : any) => {
-  if (menu.link) {
-  navigate(menu.link)
-  }
+  const handleMenuClick = (menu: any) => {
+    if (menu.link) {
+      navigate(menu.link)
+    }
 
-  if (menu.action) {
-    menu.action()
+    if (menu.action) {
+      menu.action()
+    }
   }
-}
 
   return <div className="flex-col justify-between">
- {menulist.map((menu, index) => (
-  <p className="w-full rounded-md p-2 hover:bg-gray-300/50 transition duration-150 ease-in-out hover:cursor-pointer" onClick={()=> handleMenuClick(menu)}>
-    <span className="flex gap-2 items-center">{menu.icon}{menu.title}</span>
-  </p>
-))}
-    </div>
+    {menulist.map((menu, index) => (
+      <p className="w-full rounded-md p-2 hover:bg-gray-300/50 transition duration-150 ease-in-out hover:cursor-pointer" onClick={() => handleMenuClick(menu)}>
+        <span className="flex gap-2 items-center">{menu.icon}{menu.title}</span>
+      </p>
+    ))}
+  </div>
 }
 
 export default SidebarMenu

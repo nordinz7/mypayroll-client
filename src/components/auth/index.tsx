@@ -44,7 +44,8 @@ export function UserAuthForm({ className, mode = UserAuthFormMode.SignIn, ...pro
         if (data?.signIn?.jwt) {
           toast({
             title: "Login Success",
-            description: "You have successfully logged in! Redirecting to employees page."
+            description: "You have successfully logged in! Redirecting to employees page.",
+            duration: 1000
           })
 
           setTimeout(() => {
