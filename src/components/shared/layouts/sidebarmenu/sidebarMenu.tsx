@@ -4,6 +4,7 @@ import { FaUsers } from "react-icons/fa6";
 import { IoIosLogOut } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { FaUser } from "react-icons/fa";
+import { generateUniqueId } from "@/utils";
 
 const SidebarMenu = () => {
   const logout = useAuth((state) => state.logOut)
@@ -46,8 +47,8 @@ const SidebarMenu = () => {
   }
 
   return <div className="flex-col justify-between">
-    {menulist.map((menu, index) => (
-      <p className="w-full rounded-md p-2 hover:bg-gray-300/50 transition duration-150 ease-in-out hover:cursor-pointer" onClick={() => handleMenuClick(menu)}>
+    {menulist.map((menu) => (
+      <p className="w-full rounded-md p-2 hover:bg-gray-300/50 transition duration-150 ease-in-out hover:cursor-pointer" onClick={() => handleMenuClick(menu)} key={generateUniqueId()}>
         <span className="flex gap-2 items-center">{menu.icon}{menu.title}</span>
       </p>
     ))}
