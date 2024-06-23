@@ -2,8 +2,8 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
 export enum Theme {
-  dark = 'dark',
   light = 'light',
+  dark = 'dark',
   system = 'system',
 }
 

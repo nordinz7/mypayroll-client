@@ -11,22 +11,20 @@ type LayoutProps = {
 
 const index = (props: LayoutProps) => {
   return (
-      <ResizablePanelGroup
-        direction="horizontal"
-        className="min-h-[100vh] min-w-[100vw] max-w-md border dark:border-gray-700 bg-white dark:bg-gray-800 dark:text-[#e7e5e4] shadow-lg dark:shadow-none overflow-hidden"
-      >
-        <ResizablePanel defaultSize={10} maxSize={10} minSize={3}>
-          <div className="flex h-full items-start justify-center pt-2 pb-2">
-            <SidebarMenu />
-          </div>
-        </ResizablePanel>
-        <ResizableHandle withHandle />
-        <ResizablePanel defaultSize={90}>
-          <div className="flex h-full items-center justify-center p-6">
-            <Outlet />
-          </div>
-        </ResizablePanel>
-      </ResizablePanelGroup>
+    <ResizablePanelGroup
+      direction="horizontal"
+      className="min-h-[100vh] min-w-[100vw] max-w-md border dark:border-gray-700 bg-white dark:bg-gray-800 dark:text-[#e7e5e4] shadow-lg dark:shadow-none overflow-hidden"
+    >
+      <ResizablePanel defaultSize={10} maxSize={10} minSize={3}>
+        <SidebarMenu />
+      </ResizablePanel>
+      <ResizableHandle withHandle />
+      <ResizablePanel defaultSize={90}>
+        <div className="flex h-full items-center justify-center p-6">
+          <Outlet />
+        </div>
+      </ResizablePanel>
+    </ResizablePanelGroup>
   )
 }
 
