@@ -1,8 +1,9 @@
 import { EmployeeForm } from '@/components/employees/form'
+import { FormMode } from '@/types/customGlobalTypes'
 
 const CreateEmployee = () => {
   return (
-    <EmployeeForm />
+    <EmployeeForm mode={FormMode.create} />
   )
 }
 

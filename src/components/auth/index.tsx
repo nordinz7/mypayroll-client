@@ -8,13 +8,12 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 
 import { ImSpinner3 } from "react-icons/im";
-import { useMutation } from "@apollo/client"
-import { USER_SIGN_IN, USER_SIGN_UP } from "@/components/auth/schema"
 import { useToast } from "@/components/ui/use-toast"
 import { useAuth } from "@/stores/useAuth"
 import { useNavigate } from "react-router-dom"
-import { ToastAction } from "@/components/ui/toast"
 import { Typography } from "@/components/ui/typography"
+import { ThemeToggle } from "@/components/shared/theme-switcher"
+import { request } from "@/utils"
 
 export enum UserAuthFormMode {
   SignIn = "SignIn",
@@ -32,16 +31,41 @@ export function UserAuthForm({ className, mode = UserAuthFormMode.SignIn, ...pro
     password: "",
     confirmPassword: "",
   })
+  const [loading, setLoading] = React.useState(false)
   const setToken = useAuth((state) => state.setToken)
   const isSignUp = mode === UserAuthFormMode.SignUp
   const navigate = useNavigate()
-
   const { toast } = useToast()
 
-  const [signIn, { loading }] = useMutation(USER_SIGN_IN,
-    {
-      onCompleted: (data) => {
-        if (data?.signIn?.jwt) {
+  async function onSubmit(event: React.SyntheticEvent) {
+    event.preventDefault()
+    setLoading(true)
+
+    const mutationUrl = `http://localhost:8000/api/public/${isSignUp ? 'register' : 'login'}`
+
+    const input = { ...formValues }
+
+    if (!isSignUp) { //@ts-ignore
+      delete input?.name //@ts-ignore
+      delete input?.confirmPassword
+    }
+
+    try {
+      const res = await request.post(mutationUrl, input)
+
+      if (isSignUp) {
+        if (res.uuid) {
+          toast({
+            title: "Success",
+            description: "User created successfully! please sign in again"
+          })
+
+          setTimeout(() => {
+            navigate("/login")
+          }, 2000)
+        }
+      } else {
+        if (res.jwt) {
           toast({
             title: "Login Success",
             description: "You have successfully logged in! Redirecting to employees page.",
@@ -52,64 +76,25 @@ export function UserAuthForm({ className, mode = UserAuthFormMode.SignIn, ...pro
             navigate("/")
           }, 1000)
         }
-        setToken(data?.signIn?.jwt)
-      },
-      onError: (error) => {
-        toast({
-          title: "Error",
-          description: error.message,
-          action: error.message === "User not found" ? <ToastAction onClick={() => navigate("/signup")}
-            altText="Sign up">{'Sign up'}</ToastAction> : undefined
-        })
+        setToken(res.jwt)
       }
-    }
-  )
-  const [signUp, { loading: signUpLoading }] = useMutation(USER_SIGN_UP, {
-    onCompleted: (data) => {
-      if (data.createUser.uuid) {
-        toast({
-          title: "Success",
-          description: "User created successfully! please sign in again"
-        })
-
-        setTimeout(() => {
-          navigate("/login")
-        }, 2000)
-      }
-    },
-    onError: (error) => {
+    } catch (error: any) {
       toast({
         title: "Error",
         description: error.message,
       })
+    } finally {
+      setLoading(false)
     }
-
-  })
-
-  async function onSubmit(event: React.SyntheticEvent) {
-    event.preventDefault()
-
-    const mutation = isSignUp ? signUp : signIn
-
-    const input = { ...formValues }
-
-    if (!isSignUp) { //@ts-ignore
-      delete input?.name //@ts-ignore
-      delete input?.confirmPassword
-    }
-
-    await mutation({
-      variables: {
-        input
-      },
-    })
-
   }
 
   return (
     <>
-      <div className={cn("grid", className, 'flex-col justify-center items-center h-[100vh] dark:text-gray-300')} {...props}>
+      <div className={cn("grid", className, 'flex-col justify-center items-center h-[100vh] text-slate-950 dark:bg-slate-950 dark:text-slate-50')} {...props}>
         <Typography type="h1" text="myPayroll" />
+        <span className="absolute top-5 right-5">
+          <ThemeToggle />
+        </span>
         <form onSubmit={onSubmit}>
           <div className="grid gap-2">
             {isSignUp && <div className="grid gap-1">
@@ -123,7 +108,7 @@ export function UserAuthForm({ className, mode = UserAuthFormMode.SignIn, ...pro
                 autoCapitalize="none"
                 autoComplete="name"
                 autoCorrect="off"
-                disabled={loading || signUpLoading}
+                disabled={loading}
                 value={formValues.name}
                 onChange={(e) => setFormValues((prev) => ({ ...prev, name: e.target.value }))}
               />
@@ -139,7 +124,7 @@ export function UserAuthForm({ className, mode = UserAuthFormMode.SignIn, ...pro
                 autoCapitalize="none"
                 autoComplete="email"
                 autoCorrect="off"
-                disabled={loading || signUpLoading}
+                disabled={loading}
                 value={formValues.email}
                 onChange={(e) => setFormValues((prev) => ({ ...prev, email: e.target.value }))}
               />
@@ -155,7 +140,7 @@ export function UserAuthForm({ className, mode = UserAuthFormMode.SignIn, ...pro
                 autoCapitalize="none"
                 autoComplete="password"
                 autoCorrect="off"
-                disabled={loading || signUpLoading}
+                disabled={loading}
                 value={formValues.password}
                 onChange={(e) => setFormValues((prev) => ({ ...prev, password: e.target.value }))
                 }
@@ -172,14 +157,14 @@ export function UserAuthForm({ className, mode = UserAuthFormMode.SignIn, ...pro
                 autoCapitalize="none"
                 autoComplete="confirmPassword"
                 autoCorrect="off"
-                disabled={loading || signUpLoading}
+                disabled={loading}
                 value={formValues.confirmPassword}
                 onChange={(e) => setFormValues((prev) => ({ ...prev, confirmPassword: e.target.value }))
                 }
               />
             </div>}
-            <Button variant="ghost" type="submit" disabled={loading || signUpLoading}>
-              {loading || signUpLoading && (
+            <Button variant="ghost" type="submit" disabled={loading}>
+              {loading && (
                 <ImSpinner3 className="mr-2 h-4 w-4 animate-spin" />
               )}
               {isSignUp ? "Sign Up" : "Sign In"}
@@ -187,8 +172,8 @@ export function UserAuthForm({ className, mode = UserAuthFormMode.SignIn, ...pro
           </div>
         </form>
         <span className="w-full border-t" />
-        <Button variant="ghost" type="button" disabled={loading || signUpLoading} onClick={() => navigate(`/${isSignUp ? 'login' : 'signup'}`)}>
-          {loading || signUpLoading && (
+        <Button variant="ghost" type="button" disabled={loading} onClick={() => navigate(`/${isSignUp ? 'login' : 'signup'}`)}>
+          {loading && (
             <ImSpinner3 className="mr-2 h-4 w-4 animate-spin" />
           )}
           {isSignUp ? "Sign In" : "Sign Up"}

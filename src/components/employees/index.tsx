@@ -35,6 +35,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { Link } from "react-router-dom"
 
 const data: Payment[] = [
   {
@@ -197,6 +198,7 @@ export function DataTableDemo() {
 
   return (
     <div className="w-full dark:focus:bg-slate-800 dark:focus:text-slate-50">
+      <Link to={'/employee/create'}>Add</Link>
       <div className="flex items-center py-4">
         <Input
           placeholder="Filter emails..."
@@ -244,9 +246,9 @@ export function DataTableDemo() {
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                     </TableHead>
                   )
                 })}

@@ -6,3 +6,34 @@ export const generateUniqueId  =(length:number = 5)=> {
   }
   return uniqueId;
 }
+
+type HttpMethod = 'GET' | 'POST';
+type Headers = { [key: string]: string };
+type Body = Record<string, unknown> | undefined;
+
+const _request = async (url: string, method: HttpMethod, body: Body = {}, headers: Headers = {}): Promise<any> => {
+    headers['Content-Type'] = 'application/json';
+
+    const response = await fetch(url, {
+      method,
+      headers,
+      body: JSON.stringify(body),
+    });
+
+    const data = await response.json();
+
+    if (data.error) {
+      throw new Error(data.error);
+    }
+
+    return data
+  }
+
+export const request = {
+  post: async (url: string, body: Body = {}, headers: Headers = {}): Promise<any> => {
+    return _request(url, 'POST', body, headers);
+  },
+  get: async (url: string, headers: Headers = {}): Promise<any> => {
+    return _request(url, 'GET', undefined, headers);
+  },
+};

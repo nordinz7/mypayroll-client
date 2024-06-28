@@ -13,6 +13,11 @@ import { EducationLevel, MartialStatus, Race, Religion } from "@/types/types"
 import FormFieldMapper, { FormFieldItem } from "@/components/shared/form-field-mapper"
 import { DatePicker } from "@/components/shared/date-picker"
 import { SelectScrollable } from "@/components/shared/select"
+import { FormMode } from "@/types/customGlobalTypes"
+import { startCase } from "lodash"
+import { useMutation, useQuery } from "@apollo/client"
+import { CREATE_EMPLOYEE, VIEW_EMPLOYEE, UPDATE_EMPLOYEE } from "@/components/employees/schema"
+import { useNavigate } from "react-router-dom"
 
 const FormSchema = z.object({
   birthDate: z.date(),
@@ -32,23 +37,43 @@ const FormSchema = z.object({
   spouseOccupation: z.string().nullable(),
 })
 
-export function EmployeeForm() {
+type EmployeeFormProps = {
+  mode: FormMode
+  employeeId?: string
+}
+
+export const EmployeeForm = ({ mode, employeeId }: EmployeeFormProps) => {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
-    defaultValues: {
-    },
+    defaultValues: {},
   })
 
-  function handleSubmit() {
+  const navigate = useNavigate()
+
+  const [createEmployee] = useMutation(CREATE_EMPLOYEE, {
+    onCompleted: (data) => {
+      if (data.createEmployee.id) {
+        navigate(`/employee/${data.createEmployee.id}`)
+      }
+    }
+  })
+  const [updateEmployee] = useMutation(UPDATE_EMPLOYEE)
+  useQuery(VIEW_EMPLOYEE, {
+    variables: { id: Number(employeeId) },
+    skip: mode === FormMode.create || !employeeId,
+    onCompleted: (data) => {
+      form.reset(data.employee)
+    }
+  })
+
+  const handleSubmit = async (e: any) => {
+    e?.preventDefault()
     const data = form.getValues()
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    })
+    if (mode === FormMode.create) {
+      await createEmployee({ variables: { input: data } })
+    } else {
+      await updateEmployee({ variables: { id: employeeId, input: data } })
+    }
   }
 
   const items: FormFieldItem[] = [
@@ -81,12 +106,25 @@ export function EmployeeForm() {
       }
     },
     {
-      name: "Religion",
+      name: "religion",
       label: "Religion",
       input: SelectScrollable,
       inputProps: {
         items: Object.values(Religion)
       }
+    },
+    {
+      name: "martialStatus",
+      label: "Martial Status",
+      input: SelectScrollable,
+      inputProps: {
+        items: Object.values(MartialStatus)
+      }
+    },
+    {
+      name: "nationality",
+      label: "Nationality",
+      input: Input,
     },
     {
       name: "phone",
@@ -95,11 +133,15 @@ export function EmployeeForm() {
     },
   ]
 
+  // if (loading) {
+  //   <div>Loading...</div>
+  // }
+
   return (
     <Form {...form}>
-      <form className="w-2/3 space-y-6">
+      <form className="w-2/3 space-y-6" onSubmit={handleSubmit}>
         <FormFieldMapper form={form} items={items} />
-        <Button type="submit" onClick={handleSubmit}>Submit</Button>
+        <Button type='submit'>{startCase(mode)}</Button>
       </form>
     </Form>
   )
