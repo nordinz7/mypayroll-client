@@ -55,9 +55,31 @@ export const EmployeeForm = ({ mode, employeeId }: EmployeeFormProps) => {
       if (data.createEmployee.id) {
         navigate(`/employee/${data.createEmployee.id}`)
       }
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+      })
     }
   })
-  const [updateEmployee] = useMutation(UPDATE_EMPLOYEE)
+  const [updateEmployee] = useMutation(UPDATE_EMPLOYEE,
+    {
+      onCompleted: () => {
+        toast({
+          title: "Success",
+          description: "Employee updated successfully",
+        })
+      },
+      onError: (error) => {
+        toast({
+          title: "Error",
+          description: error.message,
+        })
+      }
+    }
+  )
+
   useQuery(VIEW_EMPLOYEE, {
     variables: { id: Number(employeeId) },
     skip: mode === FormMode.create || !employeeId,
@@ -69,10 +91,11 @@ export const EmployeeForm = ({ mode, employeeId }: EmployeeFormProps) => {
   const handleSubmit = async (e: any) => {
     e?.preventDefault()
     const data = form.getValues()
+    data.children = Number(data.children)
     if (mode === FormMode.create) {
       await createEmployee({ variables: { input: data } })
     } else {
-      await updateEmployee({ variables: { id: employeeId, input: data } })
+      await updateEmployee({ variables: { id: Number(employeeId), input: data } })
     }
   }
 
@@ -88,13 +111,18 @@ export const EmployeeForm = ({ mode, employeeId }: EmployeeFormProps) => {
       input: Input,
     },
     {
+      name: "birthDate",
+      label: "Birth Date",
+      input: DatePicker,
+    },
+    {
       name: "joinDate",
       label: "Join Date",
       input: DatePicker,
     },
     {
-      name: "birthDate",
-      label: "Birth Date",
+      name: "endDate",
+      label: "End Date",
       input: DatePicker,
     },
     {
@@ -122,9 +150,40 @@ export const EmployeeForm = ({ mode, employeeId }: EmployeeFormProps) => {
       }
     },
     {
+      name: "educationLevel",
+      label: "EducationLevel",
+      input: SelectScrollable,
+      inputProps: {
+        items: Object.values(EducationLevel)
+      }
+    },
+    {
+      name: "qualification",
+      label: "Qualification",
+      input: Input,
+    },
+    {
       name: "nationality",
       label: "Nationality",
       input: Input,
+    },
+    {
+      name: "spouseName",
+      label: "SpouseName",
+      input: Input,
+    },
+    {
+      name: "spouseOccupation",
+      label: "SpouseOccupation",
+      input: Input,
+    },
+    {
+      name: "children",
+      label: "No. of Children",
+      input: Input,
+      inputProps: {
+        type: "number"
+      }
     },
     {
       name: "phone",

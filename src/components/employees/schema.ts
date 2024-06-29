@@ -3,7 +3,7 @@ import { gql } from "@apollo/client"
 export const VIEW_EMPLOYEE = gql`
   query employee($id: Int!){
     employee(id: $id){
-      id
+      # id
       name
       birthDate
       nationality
@@ -22,10 +22,7 @@ export const VIEW_EMPLOYEE = gql`
       phone
       email
 
-      enumerationId
-
-      createdAt
-      updatedAt
+      # enumerationId
     }
   }
 `
