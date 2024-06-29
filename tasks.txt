@@ -1,0 +1,10 @@
+#CLIENT
+feat: bulk import and export employees
+fix: employees table pagination
+fix: show icon only if width become small for sidebar
+feat: turn employee form into sections and should be three-> personal details, enumeration, compensationItems
+
+#API
+fix: create m2m token for system request e.g grapql type generation need auth token
+
+
