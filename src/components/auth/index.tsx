@@ -53,30 +53,16 @@ export function UserAuthForm({ className, mode = UserAuthFormMode.SignIn, ...pro
 
     try {
       const res = await request.post(mutationUrl, input)
+      if (res.jwt) {
+        toast({
+          title: "Success",
+          description: ` ${isSignUp ? 'User created successfully! signing in...' : 'You have successfully logged in! Redirecting to employees page.'}`
+        })
 
-      if (isSignUp) {
-        if (res.uuid) {
-          toast({
-            title: "Success",
-            description: "User created successfully! please sign in again"
-          })
+        setTimeout(() => {
+          navigate("/")
+        }, 1000)
 
-          setTimeout(() => {
-            navigate("/login")
-          }, 2000)
-        }
-      } else {
-        if (res.jwt) {
-          toast({
-            title: "Login Success",
-            description: "You have successfully logged in! Redirecting to employees page.",
-            duration: 1000
-          })
-
-          setTimeout(() => {
-            navigate("/")
-          }, 1000)
-        }
         setToken(res.jwt)
       }
     } catch (error: any) {
