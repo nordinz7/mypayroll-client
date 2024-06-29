@@ -88,17 +88,17 @@ const SidebarMenu = () => {
   }
 
   return (
-    <div className="flex flex-col h-full justify-between pt-2 pb-2">
+    <div className="flex flex-col h-full justify-between pt-2 pb-2 bg-[#f5f5f4] dark:bg-[#040217]">
       <div>
         {groupedItems.start.map(renderMenuItem)}
       </div>
       <div className="flex-grow flex flex-col justify-center">
         {groupedItems.middle.map(renderMenuItem)}
-      </div>
+      </div >
       <div>
         {groupedItems.end.map(renderMenuItem)}
       </div>
-    </div>
+    </div >
   );
 }
 

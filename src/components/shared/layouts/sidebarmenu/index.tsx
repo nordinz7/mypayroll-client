@@ -20,7 +20,7 @@ const index = (props: LayoutProps) => {
       </ResizablePanel>
       <ResizableHandle withHandle />
       <ResizablePanel defaultSize={90}>
-        <div className="flex h-full items-center justify-center p-6">
+        <div className="flex h-full items-start justify-center p-6">
           <Outlet />
         </div>
       </ResizablePanel>
