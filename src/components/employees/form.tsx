@@ -18,6 +18,7 @@ import { startCase } from "lodash"
 import { useMutation, useQuery } from "@apollo/client"
 import { CREATE_EMPLOYEE, VIEW_EMPLOYEE, UPDATE_EMPLOYEE } from "@/components/employees/schema"
 import { useNavigate } from "react-router-dom"
+import { LoadingSpinner } from "@/components/ui/loading-spinner"
 
 const FormSchema = z.object({
   birthDate: z.date(),
@@ -80,7 +81,7 @@ export const EmployeeForm = ({ mode, employeeId }: EmployeeFormProps) => {
     }
   )
 
-  useQuery(VIEW_EMPLOYEE, {
+  const { loading } = useQuery(VIEW_EMPLOYEE, {
     variables: { id: Number(employeeId) },
     skip: mode === FormMode.create || !employeeId,
     onCompleted: (data) => {
@@ -192,9 +193,9 @@ export const EmployeeForm = ({ mode, employeeId }: EmployeeFormProps) => {
     },
   ]
 
-  // if (loading) {
-  //   <div>Loading...</div>
-  // }
+  if (loading) {
+    < LoadingSpinner />
+  }
 
   return (
     <Form {...form}>

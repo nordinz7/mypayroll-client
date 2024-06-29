@@ -1,4 +1,5 @@
 import { EmployeeTable } from '@/components/employees'
+import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { gql, useQuery } from '@apollo/client'
 
 const GET_EMPLOYEES = gql`
@@ -38,6 +39,8 @@ query emps($input: EmployeesQueryInput) {
 
 const index = () => {
   const { data, loading } = useQuery(GET_EMPLOYEES, { variables: { input: { limit: 10, offset: 0, q: '' } } })
+
+  if (loading) return <LoadingSpinner />
 
   return (
     <EmployeeTable data={data?.employees?.rows || []} />

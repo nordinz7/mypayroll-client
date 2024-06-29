@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom"
 import { Typography } from "@/components/ui/typography"
 import { ThemeToggle } from "@/components/shared/theme-switcher"
 import { request } from "@/utils"
+import { LoadingSpinner } from "@/components/ui/loading-spinner"
 
 export enum UserAuthFormMode {
   SignIn = "SignIn",
@@ -86,6 +87,10 @@ export function UserAuthForm({ className, mode = UserAuthFormMode.SignIn, ...pro
     } finally {
       setLoading(false)
     }
+  }
+
+  if (loading) {
+    <LoadingSpinner />
   }
 
   return (
