@@ -6,7 +6,7 @@ export const VIEW_EMPLOYEE = gql`
       id
       name
       birthDate
-      # nationality
+      nationality
       religion
       race
       martialStatus

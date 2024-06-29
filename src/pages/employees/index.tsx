@@ -1,15 +1,30 @@
-import { DataTableDemo } from '@/components/employees'
-import { useEffect, useState } from 'react'
+import { EmployeeTable } from '@/components/employees'
 import { gql, useQuery } from '@apollo/client'
-import { Theme, useTheme } from '@/stores/useTheme'
-import { UserAuthForm } from '@/components/auth'
 
 const GET_EMPLOYEES = gql`
 query emps($input: EmployeesQueryInput) {
   employees(input: $input) {
     rows {
-      name
+      birthDate
+      children
+      createdAt
+      educationLevel
+      email
+      endDate
+      # enumeration
+      enumerationId
       id
+      joinDate
+      martialStatus
+      name
+      nationality
+      phone
+      # qualification
+      # race
+      # religion
+      # spouseName
+      # spouseOccupation
+      # updatedAt
     }
     pagination{
       count
@@ -22,9 +37,10 @@ query emps($input: EmployeesQueryInput) {
 
 
 const index = () => {
-  const { data, loading } = useQuery(GET_EMPLOYEES, { variables: { input: { limit: 10, offset: 0 } } })
+  const { data, loading } = useQuery(GET_EMPLOYEES, { variables: { input: { limit: 10, offset: 0, q: '' } } })
+
   return (
-   <DataTableDemo />
+    <EmployeeTable data={data?.employees?.rows || []} />
   )
 }
 
