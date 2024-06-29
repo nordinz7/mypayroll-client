@@ -13,7 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown } from "lucide-react"
+import { ArrowUpDown, ChevronDown, Plus } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -32,8 +32,21 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Link, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { Employee } from "@/types/types"
+import { format } from "date-fns"
+
+const calculateAge = (birthdateStr: string) => {
+  const birthdate = new Date(birthdateStr);
+  const today = new Date();
+  let age = today.getFullYear() - birthdate.getFullYear();
+  const monthDifference = today.getMonth() - birthdate.getMonth();
+  if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthdate.getDate())) {
+    age--;
+  }
+  return age;
+}
+
 
 export const columns: ColumnDef<Employee>[] = [
   {
@@ -61,9 +74,19 @@ export const columns: ColumnDef<Employee>[] = [
   {
     accessorKey: "name",
     header: "Name",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("name")}</div>
-    ),
+    cell: ({ row }) => row.getValue("name"),
+  }, {
+    accessorKey: "birthDate",
+    header: "Age (years)",
+    cell: ({ row }) => calculateAge(row.getValue("birthDate")),
+  }, {
+    accessorKey: "joinDate",
+    header: "Join Date",
+    cell: ({ row }) => format(row.getValue("joinDate"), "dd/MM/yyyy"),
+  }, {
+    accessorKey: "educationLevel",
+    header: "Education",
+    cell: ({ row }) => row.getValue("educationLevel"),
   },
   {
     accessorKey: "email",
@@ -78,14 +101,12 @@ export const columns: ColumnDef<Employee>[] = [
         </Button>
       )
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
+    cell: ({ row }) => row.getValue("email"),
   },
   {
     accessorKey: "martialStatus",
     header: "Martial Status",
-    cell: ({ row }) => {
-      return <div className="text-right font-medium">{row.getValue('martialStatus')}</div>
-    },
+    cell: ({ row }) => row.getValue("martialStatus"),
   },
 ]
 
@@ -130,8 +151,7 @@ export function EmployeeTable({ data }: EmployeeTableProps) {
 
   return (
     <div className="w-full dark:focus:bg-slate-800 dark:focus:text-slate-50">
-      <Link to={'/employee/create'}>Add</Link>
-      <div className="flex items-center py-4">
+      <div className="flex items-center justify-between py-4">
         <Input
           placeholder="Filter emails..."
           value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
@@ -140,32 +160,37 @@ export function EmployeeTable({ data }: EmployeeTableProps) {
           }
           className="max-w-sm"
         />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown className="ml-2 h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <span className="flex gap-2 self-end">
+          <Button variant="outline" className="ml-auto" onClick={() => navigate('/employee/create')}>
+            Add <Plus className="ml-2 h-4 w-4" />
+          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="ml-auto">
+                Columns <ChevronDown className="ml-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
+                    >
+                      {column.id}
+                    </DropdownMenuCheckboxItem>
+                  )
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </span>
       </div>
       <div className="rounded-md border">
         <Table>
