@@ -13,7 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, Plus } from "lucide-react"
+import { ArrowUpDown, ChevronDown, MoreHorizontal, Plus } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -21,6 +21,7 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
@@ -35,6 +36,7 @@ import {
 import { useNavigate } from "react-router-dom"
 import { Employee } from "@/types/types"
 import { format } from "date-fns"
+import ImportExport from "@/components/shared/importExportData"
 
 const calculateAge = (birthdateStr: string) => {
   const birthdate = new Date(birthdateStr);
@@ -188,6 +190,21 @@ export function EmployeeTable({ data }: EmployeeTableProps) {
                     </DropdownMenuCheckboxItem>
                   )
                 })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="ml-auto">
+                More <MoreHorizontal className="ml-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem>
+                <ImportExport type="export" entity="employee" />
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <ImportExport type="import" entity="employee" />
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </span>
