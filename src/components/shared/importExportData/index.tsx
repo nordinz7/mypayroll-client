@@ -7,13 +7,13 @@ type ImportExportProps = {
   entity: 'employee'
 }
 
-const ImportExport = async (props: ImportExportProps) => {
+const ImportExport = (props: ImportExportProps) => {
   const { type } = props
   const Icon = type === 'import' ? FileUp : FileDown
   const entity = entities[props.entity]
 
   return (
-    < span className='flex-row cursor-pointer' >
+    <span className='flex-row cursor-pointer' onClick={() => entity[type] && entity[type]()} >
       <span>{startCase(type)}</span>
       <Icon className="ml-2 h-4 w-4 inline" />
     </ span>

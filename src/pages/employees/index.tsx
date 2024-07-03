@@ -2,7 +2,7 @@ import { EmployeeTable } from '@/components/employees'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { gql, useQuery } from '@apollo/client'
 
-const GET_EMPLOYEES = gql`
+export const GET_EMPLOYEES = gql`
 query emps($input: EmployeesQueryInput) {
   employees(input: $input) {
     rows {
