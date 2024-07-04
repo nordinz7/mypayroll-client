@@ -37,6 +37,7 @@ import { useNavigate } from "react-router-dom"
 import { Employee } from "@/types/types"
 import { format } from "date-fns"
 import ImportExport from "@/components/shared/importExportData"
+import { Dialog } from "@/components/ui/dialog"
 
 const calculateAge = (birthdateStr: string) => {
   const birthdate = new Date(birthdateStr);
@@ -202,9 +203,11 @@ export function EmployeeTable({ data }: EmployeeTableProps) {
               <DropdownMenuItem>
                 <ImportExport type="export" entity="employee" />
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <ImportExport type="import" entity="employee" />
-              </DropdownMenuItem>
+              <Dialog>
+                <DropdownMenuItem>
+                  <ImportExport type="import" entity="employee" />
+                </DropdownMenuItem>
+              </Dialog>
             </DropdownMenuContent>
           </DropdownMenu>
         </span>

@@ -1,10 +1,9 @@
 import { convertToCsv } from "@/components/shared/importExportData/entities/helper"
 import { GET_EMPLOYEES } from "@/pages/employees"
-import { apolloClientSingleton } from "@/utils/singletons/apolloClient"
+import { ApolloClient } from "@apollo/client"
 
 export const employeeEntity = {
-  export: async () => {
-    const client = apolloClientSingleton.getInstance()
+  export: async (client: ApolloClient<any>) => {
     const res = await client.query({
       query: GET_EMPLOYEES,
       variables: { input: {}}
