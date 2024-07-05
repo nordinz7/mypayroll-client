@@ -2,12 +2,12 @@ import { useAuth } from "@/stores/useAuth";
 import { FaUsers } from "react-icons/fa6";
 import { IoIosLogOut } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
-import { FaUser } from "react-icons/fa";
-import { generateUniqueId } from "@/utils";
+import { createAvatar, generateUniqueId } from "@/utils";
 import { lowerCase, startCase, upperFirst } from "lodash";
 import { Theme, useTheme } from "@/stores/useTheme";
 import { Moon, Sun } from "lucide-react";
 import { useMemo } from "react";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 type SideMenuItem = {
   title: string;
@@ -43,7 +43,9 @@ const SidebarMenu = () => {
   menulist.push(
     {
       title: user?.name || 'Profile',
-      icon: <FaUser />,
+      icon: <Avatar className="w-3 h-3">
+        <AvatarFallback>{createAvatar(user?.name)}</AvatarFallback>
+      </Avatar>,
       link: '/profile',
       position: 'end'
     },

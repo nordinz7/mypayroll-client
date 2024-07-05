@@ -37,3 +37,12 @@ export const request = {
     return _request(url, 'GET', undefined, headers);
   },
 };
+
+
+export const createAvatar = (name: string)=>{
+  if (!name) return 'USER';
+
+  const parts = name.split(' ');
+  const initials = parts.map(part => part.charAt(0).toUpperCase()).join('');
+  return initials;
+}
