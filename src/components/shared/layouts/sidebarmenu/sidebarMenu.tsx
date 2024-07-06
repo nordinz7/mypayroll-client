@@ -46,7 +46,7 @@ const SidebarMenu = () => {
       icon: <Avatar className="w-3 h-3">
         <AvatarFallback>{createAvatar(user?.name)}</AvatarFallback>
       </Avatar>,
-      link: '/profile',
+      link: `/userProfile/${user?.uuid}`,
       position: 'end'
     },
     {

@@ -140,6 +140,7 @@ export type Mutation = {
   deleteUser?: Maybe<User>;
   resetPassword?: Maybe<Response>;
   signIn?: Maybe<Token>;
+  signUp?: Maybe<Token>;
   unDeleteUser?: Maybe<User>;
   updateEmployee?: Maybe<Employee>;
   updateEnumeration?: Maybe<Enumeration>;
@@ -177,6 +178,11 @@ export type MutationSignInArgs = {
 };
 
 
+export type MutationSignUpArgs = {
+  input?: InputMaybe<CreateUserInput>;
+};
+
+
 export type MutationUnDeleteUserArgs = {
   uuid?: InputMaybe<Scalars['UUID']['input']>;
 };
@@ -194,7 +200,7 @@ export type MutationUpdateEnumerationArgs = {
 
 
 export type MutationUpdateUserArgs = {
-  input?: InputMaybe<CreateUserInput>;
+  input?: InputMaybe<UpdateUserInput>;
 };
 
 export type Query = {
@@ -273,6 +279,12 @@ export type UpdateEnumerationInput = {
   basicSalary: Scalars['Float']['input'];
   compensationItems?: InputMaybe<Array<InputMaybe<CreateCompensationItemInput>>>;
   enumerationId: Scalars['Int']['input'];
+};
+
+export type UpdateUserInput = {
+  email?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  uuid?: InputMaybe<Scalars['UUID']['input']>;
 };
 
 export type User = {
@@ -402,6 +414,7 @@ export type ResolversTypes = {
   Token: ResolverTypeWrapper<Token>;
   UUID: ResolverTypeWrapper<Scalars['UUID']['output']>;
   UpdateEnumerationInput: UpdateEnumerationInput;
+  UpdateUserInput: UpdateUserInput;
   User: ResolverTypeWrapper<User>;
   UserQueryInput: UserQueryInput;
   Users: ResolverTypeWrapper<Users>;
@@ -432,6 +445,7 @@ export type ResolversParentTypes = {
   Token: Token;
   UUID: Scalars['UUID']['output'];
   UpdateEnumerationInput: UpdateEnumerationInput;
+  UpdateUserInput: UpdateUserInput;
   User: User;
   UserQueryInput: UserQueryInput;
   Users: Users;
@@ -505,6 +519,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, Partial<MutationDeleteUserArgs>>;
   resetPassword?: Resolver<Maybe<ResolversTypes['Response']>, ParentType, ContextType, RequireFields<MutationResetPasswordArgs, 'email'>>;
   signIn?: Resolver<Maybe<ResolversTypes['Token']>, ParentType, ContextType, Partial<MutationSignInArgs>>;
+  signUp?: Resolver<Maybe<ResolversTypes['Token']>, ParentType, ContextType, Partial<MutationSignUpArgs>>;
   unDeleteUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, Partial<MutationUnDeleteUserArgs>>;
   updateEmployee?: Resolver<Maybe<ResolversTypes['Employee']>, ParentType, ContextType, Partial<MutationUpdateEmployeeArgs>>;
   updateEnumeration?: Resolver<Maybe<ResolversTypes['Enumeration']>, ParentType, ContextType, RequireFields<MutationUpdateEnumerationArgs, 'input'>>;

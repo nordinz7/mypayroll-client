@@ -13,6 +13,8 @@ export type FormFieldItem = {
   name: string
   label: string
   input: any
+  hidden?: boolean
+  disabled?: boolean
   inputProps?: any
   description?: string
 }
@@ -28,14 +30,15 @@ const FormFieldMapper = ({ form, items = [] }: FormFieldMapperProps) => {
   return (<>
     {
       items.map((item, index) => {
-        const { name, label, description, inputProps = {} } = item
+        const { name, label, description, inputProps = {}, hidden, disabled } = item
         return (
           <FormField
             control={form.control}
             name={name}
             key={`${index}-${generateUniqueId()}`}
+            // disabled={!!disabled}
             render={({ field }) => (
-              <FormItem>
+              <FormItem hidden={!!hidden}>
                 <FormLabel>{label}</FormLabel>
                 <FormControl>
                   <item.input {...inputProps} {...field} />
