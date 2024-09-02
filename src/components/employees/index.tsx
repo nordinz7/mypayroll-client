@@ -148,9 +148,6 @@ export function EmployeeTable({ data }: EmployeeTableProps) {
     },
   })
 
-  if (!data.length) {
-    return <div>No data</div>
-  }
 
   return (
     <div className="w-full dark:focus:bg-slate-800 dark:focus:text-slate-50">
