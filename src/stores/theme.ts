@@ -12,7 +12,7 @@ type ThemeProviderState = {
   setTheme: (theme: Theme) => void
 }
 
-export const useTheme = create<ThemeProviderState>()(
+export const themeStore = create<ThemeProviderState>()(
   persist(
     (set) => ({
       theme: Theme.system,
