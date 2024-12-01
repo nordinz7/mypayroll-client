@@ -8,13 +8,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 import { ImSpinner3 } from "react-icons/im";
-import { useToast } from "@/components/ui/use-toast";
 import { authStore } from "@/stores/auth";
 import { useNavigate } from "react-router-dom";
 import { Typography } from "@/components/ui/typography";
 import { ThemeToggle } from "@/components/shared/theme-switcher";
-import { request } from "@/utils";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { useMutation } from "@apollo/client";
+import { USER_SIGN_IN, USER_SIGN_UP } from "@/components/auth/schema";
 
 export enum UserAuthFormMode {
   SignIn = "SignIn",
@@ -36,20 +36,37 @@ export function UserAuthForm({
     password: "",
     confirmPassword: "",
   });
-  const [loading, setLoading] = React.useState(false);
   const setToken = authStore((state) => state.setToken);
   const setRefreshToken = authStore((state) => state.setRefreshToken);
   const isSignUp = mode === UserAuthFormMode.SignUp;
   const navigate = useNavigate();
-  const { toast } = useToast();
+
+  const onSuccess = (data: any) => {
+    const key = isSignUp ? "signUp" : "signIn";
+    const d = data[key];
+    setToken(d.accessToken);
+    setRefreshToken(d.refreshToken);
+
+    setTimeout(() => navigate("/"), 500);
+  };
+
+  const onError = (error: any) => {
+    console.error(error);
+  };
+
+  const [signIn, { loading: signInLoading }] = useMutation(USER_SIGN_IN, {
+    onCompleted: onSuccess,
+    onError: onError,
+  });
+  const [signUp, { loading: signUpLoading }] = useMutation(USER_SIGN_UP, {
+    onCompleted: onSuccess,
+    onError: onError,
+  });
 
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault();
-    setLoading(true);
 
-    const mutationUrl = `http://localhost:8000/api/public/auth/${
-      isSignUp ? "register" : "login"
-    }`;
+    const mutation = isSignUp ? signUp : signIn;
 
     const input = { ...formValues };
 
@@ -59,36 +76,10 @@ export function UserAuthForm({
       delete input?.confirmPassword;
     }
 
-    try {
-      const res = await request.post(mutationUrl, input);
-      if (res.accessToken && res.refreshToken) {
-        toast({
-          title: "Success",
-          description: ` ${
-            isSignUp
-              ? "User created successfully! signing in..."
-              : "You have successfully logged in! Redirecting to employees page."
-          }`,
-        });
-
-        setTimeout(() => {
-          navigate("/");
-        }, 1000);
-
-        setToken(res.accessToken);
-        setRefreshToken(res.refreshToken);
-      }
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-      });
-    } finally {
-      setLoading(false);
-    }
+    await mutation({ variables: { input } });
   }
 
-  if (loading) {
+  if (signInLoading || signUpLoading) {
     <LoadingSpinner />;
   }
 
@@ -120,7 +111,7 @@ export function UserAuthForm({
                   autoCapitalize="none"
                   autoComplete="name"
                   autoCorrect="off"
-                  disabled={loading}
+                  disabled={signInLoading || signUpLoading}
                   value={formValues.name}
                   onChange={(e) =>
                     setFormValues((prev) => ({ ...prev, name: e.target.value }))
@@ -139,7 +130,7 @@ export function UserAuthForm({
                 autoCapitalize="none"
                 autoComplete="email"
                 autoCorrect="off"
-                disabled={loading}
+                disabled={signInLoading || signUpLoading}
                 value={formValues.email}
                 onChange={(e) =>
                   setFormValues((prev) => ({ ...prev, email: e.target.value }))
@@ -157,7 +148,7 @@ export function UserAuthForm({
                 autoCapitalize="none"
                 autoComplete="password"
                 autoCorrect="off"
-                disabled={loading}
+                disabled={signInLoading || signUpLoading}
                 value={formValues.password}
                 onChange={(e) =>
                   setFormValues((prev) => ({
@@ -179,7 +170,7 @@ export function UserAuthForm({
                   autoCapitalize="none"
                   autoComplete="confirmPassword"
                   autoCorrect="off"
-                  disabled={loading}
+                  disabled={signInLoading || signUpLoading}
                   value={formValues.confirmPassword}
                   onChange={(e) =>
                     setFormValues((prev) => ({
@@ -190,8 +181,15 @@ export function UserAuthForm({
                 />
               </div>
             )}
-            <Button variant="ghost" type="submit" disabled={loading}>
-              {loading && <ImSpinner3 className="mr-2 h-4 w-4 animate-spin" />}
+            <Button
+              variant="ghost"
+              type="submit"
+              disabled={signInLoading || signUpLoading}
+            >
+              {signInLoading ||
+                (signUpLoading && (
+                  <ImSpinner3 className="mr-2 h-4 w-4 animate-spin" />
+                ))}
               {isSignUp ? "Sign Up" : "Sign In"}
             </Button>
           </div>
@@ -200,10 +198,13 @@ export function UserAuthForm({
         <Button
           variant="ghost"
           type="button"
-          disabled={loading}
+          disabled={signInLoading || signUpLoading}
           onClick={() => navigate(`/${isSignUp ? "login" : "signup"}`)}
         >
-          {loading && <ImSpinner3 className="mr-2 h-4 w-4 animate-spin" />}
+          {signInLoading ||
+            (signUpLoading && (
+              <ImSpinner3 className="mr-2 h-4 w-4 animate-spin" />
+            ))}
           {isSignUp ? "Sign In" : "Sign Up"}
         </Button>
       </div>

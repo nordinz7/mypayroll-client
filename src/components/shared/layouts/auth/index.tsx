@@ -5,43 +5,85 @@ import { jwtDecode, JwtPayload } from "jwt-decode";
 import { User } from "@/types/types";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
-const TIMEOUT = 1000;
+const TIMEOUT = 500;
 
 const delay = (fn: () => void) => setTimeout(fn, TIMEOUT);
 
 const AuthLayout = () => {
   const token = authStore((state) => state.token);
   const refreshToken = authStore((state) => state.refreshToken);
+  const tokenExpiry = authStore((state) => state.tokenExpiry);
   const setUser = authStore((state) => state.setUser);
-  const setToken = authStore((state) => state.setToken);
-  const setRefreshToken = authStore((state) => state.setRefreshToken);
+  const setTokenExpiry = authStore((state) => state.setTokenExpiry);
   const isStartLoggingOut = authStore((state) => state.isStartLoggingOut);
   const logOut = authStore((state) => state.logOut);
+
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
 
   const isTokenExpired = (exp: number) => {
-    return Date.now() >= exp * 1000;
+    return Date.now() >= exp;
   };
 
-  const verifySetTokenSetUser = (token?: string | null) => {
-    if (!token) {
+  const logOutFn = () => {
+    delay(() => {
+      logOut();
+      setLoading(false);
+      navigate("/login");
+    });
+  };
+
+  const verifySetTokenSetUser = (
+    token?: string | null,
+    refreshToken?: string | null,
+    tokenExpiry: {
+      accessToken: number | null | undefined;
+      refreshToken: number | null | undefined;
+    } = { accessToken: null, refreshToken: null }
+  ) => {
+    if (!token || !refreshToken) {
       return navigate("/login");
     }
 
-    const decodedToken = jwtDecode<{ user: User } & JwtPayload>(token);
+    const oldTokenExpiry = { ...tokenExpiry };
 
-    if (isTokenExpired(decodedToken.exp || 0)) {
-      return delay(() => {
-        setToken(null);
-        setUser(null);
-        setRefreshToken(null);
-        setLoading(false);
-        navigate("/login");
-      });
+    let user: User | null = null;
+    let accessTokenExp = tokenExpiry.accessToken || 0;
+    let refreshTokenExp = tokenExpiry.refreshToken || 0;
+
+    if (!accessTokenExp) {
+      const decoded = jwtDecode<{ user: User } & JwtPayload>(token);
+      accessTokenExp = (decoded?.exp || 0) * 1000;
+      user = decoded?.user;
     }
 
-    setUser(decodedToken.user);
+    if (!refreshTokenExp) {
+      refreshTokenExp = (jwtDecode<JwtPayload>(refreshToken)?.exp || 0) * 1000;
+    }
+
+    if (isTokenExpired(accessTokenExp) || isTokenExpired(refreshTokenExp)) {
+      return logOutFn();
+    }
+
+    if (
+      oldTokenExpiry.accessToken !== accessTokenExp &&
+      oldTokenExpiry.refreshToken !== refreshTokenExp
+    ) {
+      const obj = {
+        ...tokenExpiry,
+        ...(accessTokenExp && { accessToken: accessTokenExp }),
+        ...(refreshTokenExp && {
+          refreshToken: refreshTokenExp,
+        }),
+      };
+      setUser(user);
+      setTokenExpiry(obj);
+    } else if (oldTokenExpiry.accessToken !== accessTokenExp) {
+      setUser(user);
+      setTokenExpiry({ ...tokenExpiry, accessToken: accessTokenExp });
+    } else if (oldTokenExpiry.refreshToken !== refreshTokenExp) {
+      setTokenExpiry({ ...tokenExpiry, refreshToken: refreshTokenExp });
+    }
 
     delay(() => {
       setLoading(false);
@@ -51,13 +93,13 @@ const AuthLayout = () => {
   useEffect(() => {
     if (isStartLoggingOut) {
       delay(() => {
-        logOut();
+        logOutFn();
       });
       return;
     }
 
-    verifySetTokenSetUser(token);
-  }, [token, refreshToken, isStartLoggingOut]);
+    verifySetTokenSetUser(token, refreshToken, tokenExpiry);
+  }, [token, refreshToken, isStartLoggingOut, tokenExpiry]);
 
   if (loading || isStartLoggingOut) {
     return (

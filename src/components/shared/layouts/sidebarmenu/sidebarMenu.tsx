@@ -18,7 +18,7 @@ type SideMenuItem = {
 };
 
 const SidebarMenu = () => {
-  const setStartLoggingOut = authStore((state) => state.setStartLoggingOut);
+  const setIsStartLoggingOut = authStore((state) => state.setIsStartLoggingOut);
   const user = authStore((state) => state.user);
   const theme = themeStore((state) => state.theme);
   const setTheme = themeStore((state) => state.setTheme);
@@ -60,7 +60,7 @@ const SidebarMenu = () => {
     {
       title: "Logout",
       icon: <IoIosLogOut />,
-      action: () => setStartLoggingOut(true),
+      action: () => setIsStartLoggingOut(true),
       position: "end",
     }
   );

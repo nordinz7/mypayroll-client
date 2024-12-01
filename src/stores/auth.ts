@@ -6,10 +6,12 @@ type AuthState = {
   setToken: (token: string | null | undefined) => void
   refreshToken: string | null | undefined
   setRefreshToken: (token: string | null | undefined) => void
+  tokenExpiry: { accessToken: number | null | undefined; refreshToken: number | null | undefined },
+  setTokenExpiry: (expiry: { accessToken: number | null | undefined; refreshToken: number | null | undefined }) => void
   user: Record<string, any> | null | undefined
   setUser: (user: Record<string, any> | null | undefined) => void
   isStartLoggingOut: boolean | null | undefined
-  setStartLoggingOut: (isLoggingOut: boolean) => void
+  setIsStartLoggingOut: (isLoggingOut: boolean) => void
   logOut: () => void
 }
 
@@ -20,14 +22,15 @@ export const authStore = create<AuthState>()(
       setToken: (token: string | null | undefined) => set({ token }),
       refreshToken: null,
       setRefreshToken: (token: string | null | undefined) => set({ refreshToken: token }),
+      tokenExpiry: { accessToken: null, refreshToken: null },
+      setTokenExpiry: (expiry: { accessToken: number | null | undefined; refreshToken: number | null | undefined }) =>
+        set({ tokenExpiry: expiry }),
       user: null,
       setUser: (user: Record<string, any> | null | undefined) => set({ user }),
       isStartLoggingOut: false,
-      setStartLoggingOut: (isLoggingOut: boolean) => set({ isStartLoggingOut: isLoggingOut }),
+      setIsStartLoggingOut: (isLoggingOut: boolean) => set({ isStartLoggingOut: isLoggingOut }),
       logOut: () => {
-        return setTimeout(() => {
-          set({ token: null, refreshToken: null, user: null, isStartLoggingOut: false })
-        }, 1000)
+        return set({ token: null, refreshToken: null, user: null, isStartLoggingOut: false, tokenExpiry: { accessToken: null, refreshToken: null } })
       },
     }),
     {
