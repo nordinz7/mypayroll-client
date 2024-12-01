@@ -17,6 +17,7 @@ export const apolloClientSingleton = (function () {
             fetchPolicy: 'cache-and-network',
           },
         },
+        credentials: 'include',
         headers: {
           authorization: `jwt ${token}`,
         },

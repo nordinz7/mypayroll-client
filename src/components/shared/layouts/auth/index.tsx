@@ -7,7 +7,8 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
 const TIMEOUT = 500;
 
-const delay = (fn: () => void) => setTimeout(fn, TIMEOUT);
+const delay = (fn: () => void, timeout: number = 0) =>
+  setTimeout(fn, timeout ?? TIMEOUT);
 
 const AuthLayout = () => {
   const token = authStore((state) => state.token);
@@ -18,6 +19,8 @@ const AuthLayout = () => {
   const isStartLoggingOut = authStore((state) => state.isStartLoggingOut);
   const logOut = authStore((state) => state.logOut);
 
+  const [loadingText, setLoadingText] = useState<string | undefined>(undefined);
+
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
 
@@ -25,12 +28,14 @@ const AuthLayout = () => {
     return Date.now() >= exp;
   };
 
-  const logOutFn = () => {
+  const logOutFn = (loadingTxt?: string, tm?: number) => {
+    loadingTxt && setLoadingText(loadingTxt);
+
     delay(() => {
       logOut();
       setLoading(false);
       navigate("/login");
-    });
+    }, tm);
   };
 
   const verifySetTokenSetUser = (
@@ -62,7 +67,7 @@ const AuthLayout = () => {
     }
 
     if (isTokenExpired(accessTokenExp) || isTokenExpired(refreshTokenExp)) {
-      return logOutFn();
+      return logOutFn("Session expired. Logging out...", 1500);
     }
 
     if (
@@ -112,7 +117,7 @@ const AuthLayout = () => {
           height: "100vh",
         }}
       >
-        <LoadingSpinner text={loading ? undefined : "Logging out"} />
+        <LoadingSpinner text={loadingText} />
       </div>
     );
   }
