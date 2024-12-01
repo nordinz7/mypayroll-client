@@ -17,3 +17,12 @@ mutation createUser($input: CreateUserInput) {
   }
 }
 `
+
+export const REFRESH_TOKEN = gql`
+mutation refreshToken {
+  refreshToken{
+    accessToken
+    refreshToken
+  }
+}
+`
