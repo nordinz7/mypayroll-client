@@ -10,8 +10,8 @@ export const USER_SIGN_IN = gql`
 `
 
 export const USER_SIGN_UP = gql`
-mutation createUser($input: CreateUserInput) {
-  createUser(input: $input) {
+mutation SignUp($input: CreateUserInput) {
+  signUp(input: $input) {
     accessToken
     refreshToken
   }
