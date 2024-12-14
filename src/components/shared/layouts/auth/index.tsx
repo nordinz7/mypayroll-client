@@ -28,25 +28,16 @@ const AuthLayout = () => {
 
   const navigate = useNavigate();
 
-  const [refreshTokenRoutine, { loading: refreshTokenLoading }] = useMutation(
-    REFRESH_TOKEN,
-    {
-      onCompleted: (data) => {
-        const { accessToken, refreshToken } = data.refreshToken;
-        verifySetTokenSetUser(accessToken, refreshToken);
-      },
-      onError: (err) => {
-        const resErr = err.graphQLErrors
-          .map((error) => error.message)
-          .join(",");
-        console.error(resErr);
-        logOutFn(
-          `Error occurred when refreshing session. Logging out...${resErr}`,
-          1500
-        );
-      },
-    }
-  );
+  const [refreshTokenRoutine, { data }] = useMutation(REFRESH_TOKEN, {
+    onError: (err) => {
+      const resErr = err.graphQLErrors.map((error) => error.message).join(",");
+      console.error(resErr);
+      logOutFn(
+        `Error occurred when refreshing session. Logging out...${resErr}`,
+        1500
+      );
+    },
+  });
 
   const isTokenExpired = (exp: number) => {
     return Date.now() >= exp;
@@ -138,6 +129,14 @@ const AuthLayout = () => {
 
     verifySetTokenSetUser(token, refreshToken, tokenExpiry);
   }, [token, refreshToken, isStartLoggingOut, tokenExpiry]);
+
+  useEffect(() => {
+    if (!data?.refreshToken) {
+      return console.error("no response from refreshtoken");
+    }
+    const { accessToken, refreshToken } = data.refreshToken;
+    verifySetTokenSetUser(accessToken, refreshToken);
+  }, [data]);
 
   if (loading || isStartLoggingOut) {
     return (
